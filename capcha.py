@@ -46,38 +46,46 @@ def bytedance():
         browser = p.chromium.launch(headless=False)
         ctx = browser.new_context(locale="en-US")
 
-        page = ctx.new_page()
-        page.goto(f"{os.getenv('url_bcdn')}")
-        bodys =    page.locator("#ctl00_C_CtlList tr").all()
-        for body in bodys:
-            check_class =  check_element('enterprise_name', body)
-            bussiness_code =  check_element('enterprise_code', body)
-            if check_class is not None and bussiness_code is not None:
-                enterprise_name_text = check_class.inner_text()
-                enterprise_bussines_text = part_business_code(bussiness_code.inner_text())
-                print(f'bussines code: {enterprise_bussines_text}')
-                print(f'Enterprise Name: {enterprise_name_text}')
-                page1 = ctx.new_page()
-                # find url_find_bcdn
-                page1.goto(f"{os.getenv('url_find_bcdn')}")
-                page1.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
-                page1.wait_for_timeout(5000)
-                page1.locator("#ctl00_C_ENT_GDT_CODEFld").click()
-                page1.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_bussines_text}")
-                response = motion(page1)
-                
-                page1.get_by_role("button", name="Tìm kiếm", exact=True).click()
-                with page1.expect_download() as download_info:
-                    page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
-                download_object = download_info.value
-                target_directory = 'D:\\Down-bcdn\\'
-                save_unique_file(download_object, target_directory)
-                page1.close()
-                page1.wait_for_timeout(10000)
+        pagition = 0
+        while pagition < 5:
+            page = ctx.new_page()
+            page.goto(f"{os.getenv('url_bcdn')}")
+            bodys =    page.locator("#ctl00_C_CtlList tr").all()
+            for body in bodys:
+                check_class =  check_element('enterprise_name', body)
+                bussiness_code =  check_element('enterprise_code', body)
+                if check_class is not None and bussiness_code is not None:
+                    enterprise_name_text = check_class.inner_text()
+                    enterprise_bussines_text = part_business_code(bussiness_code.inner_text())
+                    print(f'bussines code: {enterprise_bussines_text}')
+                    page1 = ctx.new_page()
+                    # find url_find_bcdn
+                    page1.goto(f"{os.getenv('url_find_bcdn')}")
+                    page1.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
+                    page1.wait_for_timeout(5000)
+                    page1.locator("#ctl00_C_ENT_GDT_CODEFld").click()
+                    page1.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_bussines_text}")
+                    response = motion(page1)
+                    
+                    page1.get_by_role("button", name="Tìm kiếm", exact=True).click()
+                    with page1.expect_download() as download_info:
+                        page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
+                    download_object = download_info.value
+                    target_directory = 'D:\\Down-bcdn\\'
+                    save_unique_file(download_object, target_directory)
+                    page1.close()
+                    page1.wait_for_timeout(10000)
 
-                
-            else:
-                continue
+                else:
+                    continue
+            pagition += 1
+            if not page.is_closed():
+                page.wait_for_timeout(5000)
+                result = page.evaluate(f"""
+                    __doPostBack('ctl00$C$CtlList','Page${pagition}');
+                    "Script executed successfully!"
+                """)
+                print(result)
         browser.close()
 
 

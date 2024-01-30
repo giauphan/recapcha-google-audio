@@ -5,16 +5,21 @@ def run(playwright: Playwright) -> None:
     browser = playwright.chromium.launch(headless=False)
     context = browser.new_context()
     page = context.new_page()
-   
-
-    result = page.evaluate("""
-        hidden = document.getElementById('return')
-        hidden.style.display = 'none'
-        __doPostBack('ctl00$C$CtlList','Page$5');
-        "Script executed successfully!"
-    """)
-    print(result)
-    page.wait_for_timeout(50000)
+    page.goto("https://bocaodientu.dkkd.gov.vn/egazette/Forms/Egazette/DefaultAnnouncements.aspx")
+    page.wait_for_timeout(3000)
+    pagition =  1
+    while pagition < 5:
+         pagition += 1
+         if not page.is_closed():
+            page.wait_for_timeout(5000)
+            result = page.evaluate(f"""
+                __doPostBack('ctl00$C$CtlList','Page${pagition}');
+                "Script executed successfully!"
+            """)
+            print(result,pagition)
+    
+    print(f'Page${pagition}')
+    page.wait_for_timeout(5000)
 
     # ---------------------
     context.close()
