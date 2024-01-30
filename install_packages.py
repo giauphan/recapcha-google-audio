@@ -3,7 +3,7 @@ import subprocess
 def install_packages():
     packages = [
         "playwright",
-        "recaptcha-challenger",  # Assuming this is the correct package name, please adjust if needed
+        "recaptcha-challenger",  
         "python-dotenv",
     ]
 
