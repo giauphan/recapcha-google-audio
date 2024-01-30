@@ -14,18 +14,12 @@ def motion(page: Page) -> typing.Optional[str]:
         solver.anti_recaptcha(page)
     return solver.response
 
-def check_element(element, body_text, body):
-    if element in body_text:
-        enterprise_name_element = body.locator(f".{element}")
-        return enterprise_name_element
-    return None
+def check_element(element, body):
+    return body.locator(f".{element}") if element in body.inner_html() else None
 
 def part_business_code(business_code_text):
     code_match = re.search(r'MÃ SỐ DN: (\d+)', business_code_text)
-    if code_match:
-        business_code = code_match.group(1)
-        return business_code
-    return None
+    return code_match.group(1) if code_match else None
 
 def bytedance():
     with sync_playwright() as p:
@@ -35,10 +29,8 @@ def bytedance():
         page.goto(f"{os.getenv('url_bcdn')}")
         bodys =    page.locator("#ctl00_C_CtlList tr").all()
         for body in bodys:
-            body_text = body.inner_html()
-            # Checking if 'enterprise_name' class is present in the current table row
-            check_class =  check_element('enterprise_name', body_text, body)
-            bussiness_code =  check_element('enterprise_code', body_text, body)
+            check_class =  check_element('enterprise_name', body)
+            bussiness_code =  check_element('enterprise_code', body)
             if check_class is not None and bussiness_code is not None:
                 enterprise_name_text = check_class.inner_text()
                 enterprise_bussines_text = part_business_code(bussiness_code.inner_text())
@@ -54,9 +46,9 @@ def bytedance():
                 print(response)
                 
                 page1.get_by_role("button", name="Tìm kiếm", exact=True).click()
-                with page1.expect_download() as download_info:
+                with page1.expect_download():
                     page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
-                download = download_info.value
+
                 
             else:
                 continue
