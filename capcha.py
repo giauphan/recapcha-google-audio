@@ -29,66 +29,67 @@ def save_unique_file(download_obj, target_directory, file_name):
         download_obj.save_as(file_path)
 
 async def bytedance():
-    async with sync_playwright() as p:
-        browser = await p.botright.Botright()
-        ctx = await browser.new_browser()
+    browser = await botright.Botright()
+    ctx = await browser.new_browser()
 
-        pagition = 1
-        while pagition < 5:
-            page = await ctx.new_page()
-            await page.goto(f"{os.getenv('url_bcdn')}")
-            
-            if not page.is_closed() and pagition >= 2:
-                await page.wait_for_timeout(5000)
-                result = await page.evaluate(f"""
-                    __doPostBack('ctl00$C$CtlList','Page${pagition}');
-                    "Script executed successfully!"
-                """)
-                print(result)
-            
-            bodys = page.locator("#ctl00_C_CtlList tr").all()
-            for body in bodys:
-                check_class = check_element('enterprise_name', body)
-                bussiness_code = check_element('enterprise_code', body)
+    pagition = 1
+    while pagition < 5:
+        page = await ctx.new_page()
+        print(os.getenv('url_bcdn'))
+        await page.goto(f"{os.getenv('url_bcdn')}")
 
-                if check_class is not None and bussiness_code is not None:
-                    enterprise_name_text = check_class.inner_text()
-                    enterprise_bussines_text = part_business_code(bussiness_code.inner_text())
-                    print(f'business code: {enterprise_bussines_text}')
-                    page1 = await ctx.new_page()
+        if not page.is_closed() and pagition >= 2:
+            await page.wait_for_timeout(5000)
+            result = await page.evaluate(f"""
+                __doPostBack('ctl00$C$CtlList','Page${pagition}');
+                "Script executed successfully!"
+            """)
+            print(result)
 
-                    # find url_find_bcdn
-                    await page1.goto(f"{os.getenv('url_find_bcdn')}")
-                    page1.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
-                    await page1.wait_for_timeout(5000)
+        # Use await to properly iterate over the locator result
+        bodys = await page.locator("#ctl00_C_CtlList tr").all()
+        for body in bodys:
+            check_class = check_element('enterprise_name', body)
+            bussiness_code = check_element('enterprise_code', body)
 
-                    while True:
-                        try:
-                            motion(page1)
-                            break
-                        except:
-                            await page1.reload()
-                            await page1.wait_for_timeout(15000)
-                            print('Your computer or network may be sending automated queries')
+            if check_class is not None and bussiness_code is not None:
+                enterprise_name_text = check_class.inner_text()
+                enterprise_bussines_text = part_business_code(bussiness_code.inner_text())
+                print(f'business code: {enterprise_bussines_text}')
+                page1 = await ctx.new_page()
 
-                    page1.locator("#ctl00_C_ENT_GDT_CODEFld").click()
-                    page1.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_bussines_text}")
+                # find url_find_bcdn
+                await page1.goto(f"{os.getenv('url_find_bcdn')}")
+                page1.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
+                await page1.wait_for_timeout(5000)
 
-                    page1.get_by_role("button", name="Tìm kiếm", exact=True).click()
-                    with page1.expect_download() as download_info:
-                        page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
-                    download_object = download_info.value
-                    target_directory = 'D:\\Down-bcdn\\'
-                    file_name = enterprise_bussines_text + '.pdf'
-                    save_unique_file(download_object, target_directory, file_name)
-                    await page1.wait_for_timeout(5000)
-                    await page1.close()
-                else:
-                    continue
+                while True:
+                    try:
+                        motion(page1)
+                        break
+                    except:
+                        await page1.reload()
+                        await page1.wait_for_timeout(15000)
+                        print('Your computer or network may be sending automated queries')
 
-            pagition += 1
+                page1.locator("#ctl00_C_ENT_GDT_CODEFld").click()
+                page1.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_bussines_text}")
 
-        await browser.close()
+                page1.get_by_role("button", name="Tìm kiếm", exact=True).click()
+                with page1.expect_download() as download_info:
+                    page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
+                download_object = download_info.value
+                target_directory = 'D:\\Down-bcdn\\'
+                file_name = enterprise_bussines_text + '.pdf'
+                save_unique_file(download_object, target_directory, file_name)
+                await page1.wait_for_timeout(5000)
+                await page1.close()
+            else:
+                continue
+
+        pagition += 1
+
+    await browser.close()
 
 if __name__ == "__main__":
     asyncio.run(bytedance())
