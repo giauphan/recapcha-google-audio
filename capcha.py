@@ -21,24 +21,11 @@ def part_business_code(business_code_text):
     code_match = re.search(r'MÃ SỐ DN: (\d+)', business_code_text)
     return code_match.group(1) if code_match else None
 
-def save_unique_file(download_obj, target_directory):
-    suggested_filename = download_obj.suggested_filename
-
-    # Check if the file already exists in the target directory
-    base_name, extension = os.path.splitext(suggested_filename)
-    counter = 1
-    
-    while True:
-        # If it exists, increment the filename
-        new_filename = f"{base_name} ({counter}){extension}"
-        file_path = os.path.join(target_directory, new_filename)
-
-        if not os.path.exists(file_path):
-            # Save the file with the unique filename
-            download_obj.save_as(file_path)
-            break
-
-        counter += 1
+def save_unique_file(download_obj, target_directory,file_name):
+    file_path = os.path.join(target_directory, file_name)
+    print(file_path)
+    if not os.path.exists(file_path):
+        download_obj.save_as(file_path)
 
 
 def bytedance():
@@ -78,6 +65,7 @@ def bytedance():
                             break
                         except:
                             page1.reload()
+                            page1.wait_for_timeout(15000)
                             print('Your computer or network may be sending automated queries')
 
                     page1.locator("#ctl00_C_ENT_GDT_CODEFld").click()
@@ -88,7 +76,8 @@ def bytedance():
                         page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
                     download_object = download_info.value
                     target_directory = 'D:\\Down-bcdn\\'
-                    save_unique_file(download_object, target_directory)
+                    file_name=enterprise_bussines_text+'.pdf'
+                    save_unique_file(download_object, target_directory,file_name)
                     page1.wait_for_timeout(5000)
                     page1.close()
                 else:
