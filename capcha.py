@@ -36,6 +36,7 @@ def bytedance():
         pagition = 1
         while pagition < 5:
             page = ctx.new_page()
+            print(os.getenv('url_bcdn'))
             page.goto(f"{os.getenv('url_bcdn')}")
             if not page.is_closed() and pagition >= 2:
                 page.wait_for_timeout(5000)
