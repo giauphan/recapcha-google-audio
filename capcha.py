@@ -75,7 +75,7 @@ def bytedance():
                     with page1.expect_download() as download_info:
                         page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
                     download_object = download_info.value
-                    target_directory = 'D:\\Down-bcdn\\'
+                    target_directory = os.getenv('target_directory')
                     file_name=enterprise_bussines_text+'.pdf'
                     save_unique_file(download_object, target_directory,file_name)
                     page1.wait_for_timeout(5000)
