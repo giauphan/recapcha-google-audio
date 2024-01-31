@@ -49,8 +49,8 @@ async def bytedance():
         # Use await to properly iterate over the locator result
         bodys = await page.locator("#ctl00_C_CtlList tr").all()
         for body in bodys:
-            check_class = check_element('enterprise_name', body)
-            bussiness_code = check_element('enterprise_code', body)
+            check_class = await check_element('enterprise_name', body)
+            bussiness_code = await check_element('enterprise_code', body)
 
             if check_class is not None and bussiness_code is not None:
                 enterprise_name_text = check_class.inner_text()

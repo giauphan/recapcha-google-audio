@@ -2,3 +2,4 @@
 .vscode
 .env
 /venv
+yolov8m-seg.pt
