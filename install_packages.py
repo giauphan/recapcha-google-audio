@@ -5,6 +5,7 @@ def install_packages():
         "playwright",
         "recaptcha-challenger",  
         "python-dotenv",
+        "botright"
     ]
 
     for package in packages:
