@@ -30,7 +30,7 @@ def save_unique_file(download_obj, target_directory,file_name):
 
 def bytedance():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         ctx = browser.new_context(locale="en-US")
 
         pagition = 1
