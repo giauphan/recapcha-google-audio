@@ -1,18 +1,10 @@
-import typing
-from playwright.sync_api import sync_playwright, Page
-from recaptcha_challenger import new_audio_solver
+from playwright.sync_api import sync_playwright
 import re
 from dotenv import load_dotenv
 import os
-
+from recognizer.agents.playwright import SyncChallenger
 
 load_dotenv()
-
-def motion(page: Page) -> typing.Optional[str]:
-    solver = new_audio_solver()
-    if solver.utils.face_the_checkbox(page):
-        solver.anti_recaptcha(page)
-    return solver.response
 
 def check_element(element, body):
     return body.locator(f".{element}") if element in body.inner_html() else None
@@ -62,7 +54,8 @@ def bytedance():
                     
                     while True:
                         try:
-                            motion(page1)
+                            challenger = SyncChallenger(page1)
+                            challenger.solve_recaptcha()
                             break
                         except:
                             page1.reload()
