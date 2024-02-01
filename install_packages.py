@@ -3,9 +3,8 @@ import subprocess
 def install_packages():
     packages = [
         "playwright",
-        "recaptcha-challenger",  
+        "recognizer",  
         "python-dotenv",
-        "botright"
     ]
 
     for package in packages:
