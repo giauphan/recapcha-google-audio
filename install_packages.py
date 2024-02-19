@@ -9,6 +9,7 @@ def install_packages():
 
     for package in packages:
         try:
+            subprocess.run(["pip", "install ", "--upgrade pip"], check=True)
             subprocess.run(["pip", "install", package], check=True)
             print(f"Successfully installed {package}")
         except subprocess.CalledProcessError as e:

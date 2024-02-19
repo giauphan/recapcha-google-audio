@@ -64,6 +64,7 @@ def process_page_data(page):
             target_directory = os.getenv('target_directory')
             file_name = f"{enterprise_code_text}.pdf"
             save_unique_file(download_object, target_directory, file_name)
+            print(f"Successfully installed {file_name}")
             page1.wait_for_timeout(5000)
             page1.close()
 
