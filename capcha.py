@@ -69,7 +69,7 @@ def process_page_data(page):
 
 def bytedance():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False, args=['--disable-gpu', '--single-process'])
+        browser = p.chromium.launch(headless=True, args=['--disable-gpu', '--single-process'])
         ctx = browser.new_context(locale="en-US")
 
         for pagination in range(1, 5):
