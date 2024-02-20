@@ -3,6 +3,7 @@ import os
 from playwright.sync_api import sync_playwright
 from dotenv import load_dotenv
 from recognizer.agents.playwright import SyncChallenger
+from GoogleDriver import upload_basic
 
 load_dotenv()
 
@@ -13,19 +14,11 @@ def extract_business_code(business_code_text):
     code_match = re.search(r'MÃ SỐ DN: (\d+)', business_code_text)
     return code_match.group(1) if code_match else None
 
-def save_unique_file(download_obj, target_directory, suggested_filename):
-    base_name, extension = os.path.splitext(suggested_filename)
-    counter = 1
-
-    while True:
-        new_filename = f"{base_name} ({counter}){extension}"
-        file_path = os.path.join(target_directory, new_filename)
-
-        if not os.path.exists(file_path):
-            download_obj.save_as(file_path)
-            break
-
-        counter += 1
+def save_unique_file(suggested_filename):
+    folder_id = os.getenv('url_find_bcdn')
+    fileName=suggested_filename
+    mimeType='application/pdf'
+    upload_basic(folder_id,fileName,mimeType)
 
 def process_page_data(page):
     body_rows = page.locator("#ctl00_C_CtlList tr").all()
@@ -60,10 +53,8 @@ def process_page_data(page):
             with page1.expect_download() as download_info:
                 page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
 
-            download_object = download_info.value
-            target_directory = os.getenv('target_directory')
             file_name = f"{enterprise_code_text}.pdf"
-            save_unique_file(download_object, target_directory, file_name)
+            save_unique_file(file_name)
             print(f"Successfully installed {file_name}")
             page1.wait_for_timeout(5000)
             page1.close()
