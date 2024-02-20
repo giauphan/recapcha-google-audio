@@ -4,7 +4,7 @@ from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 
 def upload_basic(folder_id :str,fileName : str,mimeType : str):
-    credentials = service_account.Credentials.from_service_account_file('/home/biibon/recapcha-google-audio/service_account_key.json')
+    credentials = service_account.Credentials.from_service_account_file('service_account_key.json')
 
     scopes = ['https://www.googleapis.com/auth/drive.readonly','https://www.googleapis.com/auth/drive.file','https://www.googleapis.com/auth/drive','https://www.googleapis.com/auth/drive.appdata','https://www.googleapis.com/auth/drive.metadata','https://www.googleapis.com/auth/drive.metadata.readonly',
     'https://www.googleapis.com/auth/drive.photos.readonly']
