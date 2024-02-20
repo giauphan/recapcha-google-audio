@@ -27,9 +27,3 @@ def upload_basic(folder_id :str,fileName : str,mimeType : str):
         print(f"An error occurred: {error}")
         file = None
     return file.get("id")
-
-if __name__ == "__main__":
-    folder_id = '1J8AiSCoskkOP6GXAPi1lgV-oPnhgfSHv'
-    fileName="requirements.txt"
-    mimeType='text/plain'
-    upload_basic(folder_id,fileName,mimeType)

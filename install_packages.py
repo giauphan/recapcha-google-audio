@@ -6,10 +6,13 @@ def install_packages():
         "recognizer",  
         "python-dotenv",
     ]
-
+    try:
+        subprocess.run(["pip", "install", "--upgrade", "pip"], check=True)
+        print("Successfully upgraded pip")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to upgrade pip. Error: {e}")
     for package in packages:
         try:
-            subprocess.run(["pip", "install ", "--upgrade pip"], check=True)
             subprocess.run(["pip", "install", package], check=True)
             print(f"Successfully installed {package}")
         except subprocess.CalledProcessError as e:
