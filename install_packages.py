@@ -5,6 +5,8 @@ def install_packages():
         "playwright",
         "recognizer",  
         "python-dotenv",
+        "google",
+        "googleapiclient"
     ]
     try:
         subprocess.run(["pip", "install", "--upgrade", "pip"], check=True)
