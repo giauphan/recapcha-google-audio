@@ -6,7 +6,7 @@ def install_packages():
         "recognizer",  
         "python-dotenv",
         "google",
-        "googleapiclient"
+        "google-api-python-client"
     ]
     try:
         subprocess.run(["pip", "install", "--upgrade", "pip"], check=True)
