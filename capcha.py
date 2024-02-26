@@ -17,11 +17,9 @@ def extract_business_code(business_code_text):
 def process_page_data(page):
     body_rows = page.locator("#ctl00_C_CtlList tr").all()
     for body in body_rows:
-        enterprise_name = check_element('enterprise_name', body)
         enterprise_code = check_element('enterprise_code', body)
         
-        if enterprise_name and enterprise_code:
-            enterprise_name_text = enterprise_name.inner_text()
+        if enterprise_code:
             enterprise_code_text = extract_business_code(enterprise_code.inner_text())
             print(f'Business code: {enterprise_code_text}')
 
@@ -46,13 +44,10 @@ def process_page_data(page):
             with page1.expect_download() as download_info:
                 page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
                 
-            # Upload the file content to Google Drive
             file_name = f"{enterprise_code_text}.pdf"
             print(f"wait download file {file_name}")
             page1.wait_for_timeout(5000)
             download_path = download_info.value.path()
-
-            # Read the content of the downloaded file
             with open(download_path, 'rb') as file:
                 file_content = file.read()
 
