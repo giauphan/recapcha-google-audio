@@ -45,7 +45,7 @@ def process_page_data(page):
 
             with page1.expect_download() as download_info:
                 page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
-                
+
             # Upload the file content to Google Drive
             file_name = f"{enterprise_code_text}.pdf"
             print(f"wait download file {file_name}")
@@ -61,7 +61,7 @@ def process_page_data(page):
 
 def bytedance():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, args=['--disable-gpu', '--single-process','--incognito'])
+        browser = p.chromium.launch(headless=True, args=[ '--single-process','--incognito'])
         ctx =  browser.new_context()
 
         for pagination in range(1, 5):
