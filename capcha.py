@@ -16,6 +16,9 @@ def extract_business_code(business_code_text):
 
 def process_page_data(page):
     CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+    DOWNLOAD_DIR = os.path.join(CURRENT_DIR, 'downloads')
+    os.makedirs(DOWNLOAD_DIR, exist_ok=True)
+
     body_rows = page.locator("#ctl00_C_CtlList tr").all()
     for body in body_rows:
         enterprise_code = check_element('enterprise_code', body)
@@ -49,7 +52,7 @@ def process_page_data(page):
             print(f"wait download file {file_name}")
             page1.wait_for_timeout(5000)
             download = download_info.value
-            download_path = os.path.join(CURRENT_DIR, '/storage/',file_name)
+            download_path = os.path.join(DOWNLOAD_DIR, file_name)
             download.save_as(download_path)
             with open(download_path, 'rb') as file:
                 file_content = file.read()
