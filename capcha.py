@@ -50,10 +50,10 @@ def process_page_data(page):
                 
             file_name = f"{enterprise_code_text}.pdf"
             print(f"wait download file {file_name}")
-            page1.wait_for_timeout(5000)
             download = download_info.value
             download_path = os.path.join(DOWNLOAD_DIR, file_name)
             download.save_as(download_path)
+            page1.wait_for_timeout(3000)
             with open(download_path, 'rb') as file:
                 file_content = file.read()
 
