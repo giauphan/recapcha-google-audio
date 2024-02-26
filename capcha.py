@@ -49,7 +49,7 @@ def process_page_data(page):
             print(f"wait download file {file_name}")
             page1.wait_for_timeout(5000)
             download = download_info.value
-            download_path = os.path.join(CURRENT_DIR, 'save-bcdn', download.suggested_filename)
+            download_path = os.path.join(CURRENT_DIR, '/storage/',file_name)
             download.save_as(download_path)
             with open(download_path, 'rb') as file:
                 file_content = file.read()

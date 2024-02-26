@@ -32,11 +32,3 @@ def upload_basic(folder_id: str, file_content: bytes, file_name: str, mime_type:
         file = None
     return file.get('id')
 
-if __name__ == "__main__":
-    folder_id = '1J8AiSCoskkOP6GXAPi1lgV-oPnhgfSHv'
-    fileName="requirements.txt"
-    with open(fileName, 'rb') as file:
-                file_content = file.read()
-    mimeType='text/plain'
-    upload_basic(folder_id, file_content, fileName, 'application/pdf')
-
