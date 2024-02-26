@@ -2,7 +2,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseUpload
-import io
+import io,os
 
 def upload_basic(folder_id: str, file_content: bytes, file_name: str, mime_type: str):
     credentials = service_account.Credentials.from_service_account_file('service_account_key.json')
@@ -31,4 +31,12 @@ def upload_basic(folder_id: str, file_content: bytes, file_name: str, mime_type:
         print(f'An error occurred: {error}')
         file = None
     return file.get('id')
+
+if __name__ == "__main__":
+    folder_id = '1J8AiSCoskkOP6GXAPi1lgV-oPnhgfSHv'
+    fileName="requirements.txt"
+    with open(fileName, 'rb') as file:
+                file_content = file.read()
+    mimeType='text/plain'
+    upload_basic(folder_id, file_content, fileName, 'application/pdf')
 

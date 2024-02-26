@@ -47,12 +47,15 @@ def process_page_data(page):
             file_name = f"{enterprise_code_text}.pdf"
             print(f"wait download file {file_name}")
             page1.wait_for_timeout(5000)
-            download_path = download_info.value.path()
+            download = download_info.value
+            CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+            download_path = download.save_as(CURRENT_DIR+'/save-bcdn' + download.suggested_filename)
             with open(download_path, 'rb') as file:
                 file_content = file.read()
 
             folder_id = os.getenv('url_find_bcdn')
             upload_basic(folder_id, file_content, file_name, 'application/pdf')
+            os.remove(download_path)
             print(f"Successfully installed {file_name}")
             page1.wait_for_timeout(5000)
             page1.close()

@@ -4,3 +4,4 @@
 /venv
 yolov8m-seg.pt
 service_account_key.json
+/storage
