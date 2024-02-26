@@ -35,9 +35,9 @@ def process_page_data(page):
                     challenger.solve_recaptcha()
                     break
                 except:
+                    print('Your computer or network may be sending automated queries')
                     page1.reload()
                     page1.wait_for_timeout(15000)
-                    print('Your computer or network may be sending automated queries')
 
             page1.locator("#ctl00_C_ENT_GDT_CODEFld").click()
             page1.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_code_text}")
@@ -46,7 +46,8 @@ def process_page_data(page):
             with page1.expect_download() as download_info:
                 page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
 
-            page1.wait_for_timeout(3000)
+            print(f"wait download file {file_name}")
+            page1.wait_for_timeout(5000)
             file_content = download_info.value.to_buffer()
 
             # Upload the file content to Google Drive
