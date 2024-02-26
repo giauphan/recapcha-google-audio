@@ -14,12 +14,6 @@ def extract_business_code(business_code_text):
     code_match = re.search(r'MÃ SỐ DN: (\d+)', business_code_text)
     return code_match.group(1) if code_match else None
 
-def save_unique_file(suggested_filename):
-    folder_id = os.getenv('url_find_bcdn')
-    fileName=suggested_filename
-    mimeType='application/pdf'
-    upload_basic(folder_id,fileName,mimeType)
-
 def process_page_data(page):
     body_rows = page.locator("#ctl00_C_CtlList tr").all()
     for body in body_rows:
@@ -38,7 +32,6 @@ def process_page_data(page):
             challenger = SyncChallenger(page1)
             while True:
                 try:
-                    
                     challenger.solve_recaptcha()
                     break
                 except:
@@ -53,8 +46,13 @@ def process_page_data(page):
             with page1.expect_download() as download_info:
                 page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
 
+            download_info.value.wait_for_event("download")
+            file_content = download_info.value.to_buffer()
+
+            # Upload the file content to Google Drive
             file_name = f"{enterprise_code_text}.pdf"
-            save_unique_file(file_name)
+            folder_id = os.getenv('url_find_bcdn')
+            upload_basic(folder_id, file_content, file_name, 'application/pdf')
             print(f"Successfully installed {file_name}")
             page1.wait_for_timeout(5000)
             page1.close()

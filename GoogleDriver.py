@@ -1,29 +1,34 @@
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaIoBaseUpload
+import io
 
-def upload_basic(folder_id :str,fileName : str,mimeType : str):
+def upload_basic(folder_id: str, file_content: bytes, file_name: str, mime_type: str):
     credentials = service_account.Credentials.from_service_account_file('service_account_key.json')
 
-    scopes = ['https://www.googleapis.com/auth/drive.readonly','https://www.googleapis.com/auth/drive.file','https://www.googleapis.com/auth/drive','https://www.googleapis.com/auth/drive.appdata','https://www.googleapis.com/auth/drive.metadata','https://www.googleapis.com/auth/drive.metadata.readonly',
-    'https://www.googleapis.com/auth/drive.photos.readonly']
+    scopes = [
+        'https://www.googleapis.com/auth/drive.readonly',
+        'https://www.googleapis.com/auth/drive.file',
+        'https://www.googleapis.com/auth/drive',
+        'https://www.googleapis.com/auth/drive.appdata',
+        'https://www.googleapis.com/auth/drive.metadata',
+        'https://www.googleapis.com/auth/drive.metadata.readonly',
+        'https://www.googleapis.com/auth/drive.photos.readonly'
+    ]
 
     credentials = credentials.with_scopes(scopes)
     try:
         service = build('drive', 'v3', credentials=credentials)
 
         file_metadata = {
-            "name": fileName,
-            "parents": [folder_id]
-            }
-        media = MediaFileUpload(fileName, mimetype=mimeType)
-        file = (
-                service.files()
-                .create(body=file_metadata, media_body=media, fields="id")
-                .execute()
-        )
+            'name': file_name,
+            'parents': [folder_id]
+        }
+        media = MediaIoBaseUpload(io.BytesIO(file_content), mimetype=mime_type)
+        file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
     except HttpError as error:
-        print(f"An error occurred: {error}")
+        print(f'An error occurred: {error}')
         file = None
-    return file.get("id")
+    return file.get('id')
+
