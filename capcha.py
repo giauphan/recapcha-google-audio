@@ -53,11 +53,11 @@ def process_page_data(page):
             download = download_info.value
             download_path = os.path.join(DOWNLOAD_DIR, file_name)
             download.save_as(download_path)
-            page1.wait_for_timeout(3000)
+            page1.wait_for_timeout(5000)
             with open(download_path, 'rb') as file:
                 file_content = file.read()
 
-            folder_id = os.getenv('url_find_bcdn')
+            folder_id = os.getenv('folder_id')
             print(download_path,folder_id)
             upload_basic(folder_id, file_content, file_name, 'application/pdf')
             os.remove(download_path)
