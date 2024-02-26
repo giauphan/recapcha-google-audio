@@ -50,8 +50,11 @@ def process_page_data(page):
             file_name = f"{enterprise_code_text}.pdf"
             print(f"wait download file {file_name}")
             page1.wait_for_timeout(5000)
-            file_content = download_info.value.to_buffer()
+            download_path = download_info.value.path()
 
+            # Read the content of the downloaded file
+            with open(download_path, 'rb') as file:
+                file_content = file.read()
 
             folder_id = os.getenv('url_find_bcdn')
             upload_basic(folder_id, file_content, file_name, 'application/pdf')
