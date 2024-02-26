@@ -45,13 +45,14 @@ def process_page_data(page):
 
             with page1.expect_download() as download_info:
                 page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
-
+                
+            # Upload the file content to Google Drive
+            file_name = f"{enterprise_code_text}.pdf"
             print(f"wait download file {file_name}")
             page1.wait_for_timeout(5000)
             file_content = download_info.value.to_buffer()
 
-            # Upload the file content to Google Drive
-            file_name = f"{enterprise_code_text}.pdf"
+
             folder_id = os.getenv('url_find_bcdn')
             upload_basic(folder_id, file_content, file_name, 'application/pdf')
             print(f"Successfully installed {file_name}")
