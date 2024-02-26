@@ -29,9 +29,9 @@ def process_page_data(page):
             page1.goto(os.getenv('url_find_bcdn'))
             page1.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
             page1.wait_for_timeout(5000)
-            challenger = SyncChallenger(page1)
             while True:
                 try:
+                    challenger = SyncChallenger(page1)
                     challenger.solve_recaptcha()
                     break
                 except:
