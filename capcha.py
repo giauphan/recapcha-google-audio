@@ -58,6 +58,7 @@ def process_page_data(page):
                 file_content = file.read()
 
             folder_id = os.getenv('url_find_bcdn')
+            print(download_path,folder_id)
             upload_basic(folder_id, file_content, file_name, 'application/pdf')
             os.remove(download_path)
             print(f"Successfully installed {file_name}")
