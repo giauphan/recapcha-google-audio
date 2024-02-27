@@ -1,4 +1,4 @@
-import subprocess, sys, time, os , pytz 
+import subprocess, sys, time, os , pytz ,zipfile
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -51,6 +51,11 @@ if __name__ == "__main__":
     vietnam_time = now.astimezone(vietnam_timezone)
     time_start = vietnam_time.strftime('%Y-%m-%d %H:%M:%S')
     print(f"Starting the bot at {time_start}...")
+    path = 'bcdn.log'
+    file_size = os.stat(path).st_size if os.path.exists(path) else 0
+    if  file_size.st_size <  10000000:
+        with zipfile.ZipFile(f'bcdn-{time_start}.zip', 'w') as myzip:
+            myzip.write(path)
 
     if action == "start":
         
