@@ -5,7 +5,8 @@ from googleapiclient.http import MediaIoBaseUpload
 import io,os
 
 def upload_basic(folder_id: str, file_content: bytes, file_name: str, mime_type: str):
-    credentials = service_account.Credentials.from_service_account_file('service_account_key.json')
+    path_service_account_file = CURRENT_DIR = os.path.dirname(os.path.abspath(__file__)) +'service_account_key.json'
+    credentials = service_account.Credentials.from_service_account_file(path_service_account_file)
 
     scopes = [
         'https://www.googleapis.com/auth/drive.readonly',
@@ -31,4 +32,3 @@ def upload_basic(folder_id: str, file_content: bytes, file_name: str, mime_type:
         print(f'An error occurred: {error}')
         file = None
     return file.get('id')
-
