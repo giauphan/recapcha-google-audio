@@ -50,13 +50,15 @@ if __name__ == "__main__":
     vietnam_timezone = pytz.timezone('Asia/Ho_Chi_Minh')
     vietnam_time = now.astimezone(vietnam_timezone)
     time_start = vietnam_time.strftime('%Y-%m-%d %H:%M:%S')
-    print(f"Starting the bot at {time_start}...")
     CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(CURRENT_DIR, 'bcdn.log')
     file_size = os.stat(path).st_size if os.path.exists(path) else 0
-    if  file_size <  10000000:
+    if  file_size >=  10000:
         with zipfile.ZipFile(f'bcdn-{time_start}.zip', 'w') as myzip:
             myzip.write(path)
+            print(myzip)
+
+    print(f"Starting the bot at {time_start} - size log {file_size}...")
 
     if action == "start":
         
