@@ -56,11 +56,12 @@ def process_page_data(page):
             page1.wait_for_timeout(5000)
             with open(download_path, 'rb') as file:
                 file_content = file.read()
-
+            os.remove(download_path)
+            
             folder_id = os.getenv('folder_id')
             print(download_path,folder_id)
             upload_basic(folder_id, file_content, file_name, 'application/pdf')
-            os.remove(download_path)
+            
             print(f"Successfully installed {file_name}")
             page1.wait_for_timeout(5000)
             page1.close()

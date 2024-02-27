@@ -36,3 +36,4 @@ def upload_basic(folder_id: str, file_content: bytes, file_name: str, mime_type:
     except HttpError as error:
         print(f'An error occurred: {error}')
         return None
+
