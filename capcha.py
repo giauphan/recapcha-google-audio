@@ -78,9 +78,9 @@ def bytedance():
             page.wait_for_timeout(5000)
 
             if pagination >= 2:
-                page.wait_for_timeout(5000)
                 result = page.evaluate(f"__doPostBack('ctl00$C$CtlList','Page${pagination}');")
                 print(result)
+                page.wait_for_timeout(5000)
 
             process_page_data(page)
             page.close()
