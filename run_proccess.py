@@ -21,9 +21,16 @@ def start_bot():
 
 def restart_bot():
     stop_bot()
-    time.sleep(2)  # Wait for the bot to stop
+    time.sleep(2) 
     start_bot()
 
+def status_bot():
+    if is_bot_running():
+        print("Bot is already running.")
+        return
+    
+    print("Bot is not running.")
+    
 def stop_bot():
     if not is_bot_running():
         print("Bot is not running.")
@@ -44,6 +51,8 @@ if __name__ == "__main__":
         restart_bot()
     elif action == "stop":
         stop_bot()
+    elif action == "status":
+        status_bot()
     else:
-        print("Invalid action. Please use 'start', 'restart', or 'stop'.")
+        print("Invalid action. Please use 'start', 'restart', or 'stop' or status.")
         sys.exit(1)
