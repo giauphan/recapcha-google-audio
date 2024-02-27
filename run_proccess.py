@@ -1,5 +1,6 @@
-import subprocess, sys, time, os
+import subprocess, sys, time, os , pytz 
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
@@ -45,7 +46,14 @@ if __name__ == "__main__":
 
     action = sys.argv[1]
 
+    now = datetime.now()
+    vietnam_timezone = pytz.timezone('Asia/Ho_Chi_Minh')
+    vietnam_time = now.astimezone(vietnam_timezone)
+    time_start = vietnam_time.strftime('%Y-%m-%d %H:%M:%S')
+    print(f"Starting the bot at {time_start}...")
+
     if action == "start":
+        
         start_bot()
     elif action == "restart":
         restart_bot()
