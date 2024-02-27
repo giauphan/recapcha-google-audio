@@ -54,7 +54,7 @@ if __name__ == "__main__":
     CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(CURRENT_DIR, 'bcdn.log')
     file_size = os.stat(path).st_size if os.path.exists(path) else 0
-    if  file_size >=  10000000:
+    if  file_size <  10000000:
         with zipfile.ZipFile(f'bcdn-{time_start}.zip', 'w') as myzip:
             myzip.write(path)
 
