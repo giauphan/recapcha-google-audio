@@ -20,6 +20,8 @@ async def process_page_data(arr_business_code, ctx):
 
         page_find = await ctx.new_page()
         await page_find.goto(os.getenv("url_find_bcdn"))
+        await page_find.wait_for_selector("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld")
+        await page_find.wait_for_timeout(5000)
         await page_find.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option(
             "NEW"
         )
