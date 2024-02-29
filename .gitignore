@@ -6,3 +6,4 @@ yolov8m-seg.pt
 service_account_key.json
 /storage
 bcdn.log
+__pycache__
