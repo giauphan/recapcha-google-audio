@@ -22,7 +22,7 @@ async def process_page_data(page):
     CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
     DOWNLOAD_DIR = os.path.join(CURRENT_DIR, "downloads")
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-    
+
     await page.wait_for_selector("#ctl00_C_CtlList tr")
     await page.wait_for_timeout(5000)
     body_rows = await page.locator("#ctl00_C_CtlList tr").all()
@@ -32,9 +32,7 @@ async def process_page_data(page):
 
         if enterprise_name and enterprise_code:
             enterprise_name_text = await enterprise_name.inner_text()
-            business_code = extract_business_code(
-                await enterprise_code.inner_text()
-            )
+            business_code = extract_business_code(await enterprise_code.inner_text())
 
             check_business_code = await Electronic_report.objects.filter(
                 business_code=business_code
@@ -53,9 +51,7 @@ async def bytedance():
             headless=False, args=["--single-process", "--incognito"]
         )
         ctx = await browser.new_context()
-        
-        
-            
+
         for pagination in range(1, 6):
             page = await ctx.new_page()
             print(os.getenv("url_bcdn"))
