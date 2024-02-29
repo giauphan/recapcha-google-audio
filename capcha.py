@@ -57,7 +57,7 @@ async def bytedance():
             print(os.getenv("url_bcdn"))
             print(f"page {pagination}")
             await page.goto(os.getenv("url_bcdn"))
-            await page.wait_for_load_state("networkidle") 
+            await page.wait_for_load_state("networkidle")
             await page.wait_for_timeout(5000)
 
             if pagination >= 2:

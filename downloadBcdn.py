@@ -20,7 +20,9 @@ async def process_page_data(arr_business_code, ctx):
 
         page_find = await ctx.new_page()
         await page_find.goto(os.getenv("url_find_bcdn"))
-        await page_find.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
+        await page_find.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option(
+            "NEW"
+        )
         await page_find.wait_for_timeout(5000)
         while True:
             try:
@@ -33,7 +35,9 @@ async def process_page_data(arr_business_code, ctx):
                 await page_find.wait_for_timeout(15000)
 
         await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").click()
-        await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_code_text}")
+        await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").fill(
+            f"{enterprise_code_text}"
+        )
         await page_find.wait_for_timeout(1000)
         await page_find.get_by_role("button", name="Tìm kiếm", exact=True).click()
 
