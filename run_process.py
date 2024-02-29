@@ -57,7 +57,7 @@ if __name__ == "__main__":
     vietnam_time = now.astimezone(vietnam_timezone)
     time_start = vietnam_time.strftime("%Y-%m-%d %H:%M:%S")
     CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(CURRENT_DIR, "bcdn.log")
+    path = os.path.join(CURRENT_DIR, "/log/bcdn.log")
     file_size = os.stat(path).st_size if os.path.exists(path) else 0
     if file_size >= 5000000:
         os.remove(path)
