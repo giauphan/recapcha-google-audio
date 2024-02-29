@@ -1,4 +1,4 @@
-import subprocess, sys, time, os , pytz ,zipfile
+import subprocess, sys, time, os , pytz 
 from dotenv import load_dotenv
 from datetime import datetime
 
