@@ -13,6 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.PAT }}
           ref: ${{ github.head_ref }}
 
       - name: Setup Python
@@ -26,11 +27,12 @@ jobs:
       - name: Run black
         run: black ./
 
+       - name: Pull changes
+        run: git pull
+     
       - name: Commit changes
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-          git add .
-          git commit -m "chore: fix code style" || echo "No changes to commit"
-          git pull
-          git push
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'chore: fix code style'
+          token: ${{ secrets.PAT }}
+          ref: ${{ github.head_ref }}
