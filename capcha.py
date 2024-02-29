@@ -48,7 +48,7 @@ async def process_page_data(page):
 async def bytedance():
     async with async_playwright() as p:
         browser = await p.chromium.launch(
-            headless=False, args=["--single-process", "--incognito"]
+            headless=True, args=["--single-process", "--incognito"]
         )
         ctx = await browser.new_context()
 
@@ -57,7 +57,7 @@ async def bytedance():
             print(os.getenv("url_bcdn"))
             print(f"page {pagination}")
             await page.goto(os.getenv("url_bcdn"))
-            await page.wait_for_load_state("networkidle")  # Wait for network to be idle
+            await page.wait_for_load_state("networkidle") 
             await page.wait_for_timeout(5000)
 
             if pagination >= 2:
