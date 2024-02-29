@@ -29,7 +29,7 @@ async def process_page_data(arr_business_code, ctx):
         while True:
             try:
                 challenger = AsyncChallenger(page_find)
-                challenger.solve_recaptcha()
+                await challenger.solve_recaptcha()
                 break
             except:
                 print("Your computer or network may be sending automated queries")
