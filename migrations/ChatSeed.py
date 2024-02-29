@@ -8,21 +8,11 @@ from Model.ElectronicReport import Electronic_report
 
 
 async def main():
-    Electronic_objects = await Electronic_report.objects.all()
-    business_code = 12322
-    check_business_code = await Electronic_report.objects.filter(
-        business_code=business_code
-    ).exists()
-    if check_business_code == False:
-        await Electronic_report.objects.create(
-            business_name="null",
-            business_code=business_code,
-            location="null",
-            registration_period=datetime.utcnow(),
-        )
-    for Electronic_obj in Electronic_objects:
-        create_at = Electronic_obj.business_name
-        print(create_at)
+    Electronic_objects = await Electronic_report.objects.count()
+    print(Electronic_objects)
+    # for Electronic_obj in Electronic_objects:
+    #     create_at = Electronic_obj.business_code
+    #     print(create_at)
 
 
 import asyncio

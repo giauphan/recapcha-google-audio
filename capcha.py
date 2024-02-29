@@ -1,15 +1,16 @@
 import re
+import asyncio
 import os
-from playwright.sync_api import sync_playwright
+from playwright.async_api import async_playwright
 from dotenv import load_dotenv
-from recognizer.agents.playwright import SyncChallenger
-from GoogleDriver import upload_basic
+from Model.ElectronicReport import Electronic_report
 
 load_dotenv()
 
 
-def check_element(element, body):
-    return body.locator(f".{element}") if element in body.inner_html() else None
+async def check_element(element, body):
+    inner_html = await body.inner_html()
+    return body.locator(f".{element}") if element in inner_html else None
 
 
 def extract_business_code(business_code_text):
@@ -17,84 +18,64 @@ def extract_business_code(business_code_text):
     return code_match.group(1) if code_match else None
 
 
-def process_page_data(page):
+async def process_page_data(page):
     CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
     DOWNLOAD_DIR = os.path.join(CURRENT_DIR, "downloads")
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-
-    body_rows = page.locator("#ctl00_C_CtlList tr").all()
+    
+    await page.wait_for_selector("#ctl00_C_CtlList tr")
+    await page.wait_for_timeout(5000)
+    body_rows = await page.locator("#ctl00_C_CtlList tr").all()
     for body in body_rows:
-        enterprise_code = check_element("enterprise_code", body)
+        enterprise_name = await check_element("enterprise_name", body)
+        enterprise_code = await check_element("enterprise_code", body)
 
-        if enterprise_code:
-            enterprise_code_text = extract_business_code(enterprise_code.inner_text())
-            print(f"Business code: {enterprise_code_text}")
+        if enterprise_name and enterprise_code:
+            enterprise_name_text = await enterprise_name.inner_text()
+            business_code = extract_business_code(
+                await enterprise_code.inner_text()
+            )
 
-            page1 = page.context.new_page()
-            page1.goto(os.getenv("url_find_bcdn"))
-            page1.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
-            page1.wait_for_timeout(5000)
-            while True:
-                try:
-                    challenger = SyncChallenger(page1)
-                    challenger.solve_recaptcha()
-                    break
-                except:
-                    print("Your computer or network may be sending automated queries")
-                    page1.reload()
-                    page1.wait_for_timeout(15000)
-
-            page1.locator("#ctl00_C_ENT_GDT_CODEFld").click()
-            page1.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_code_text}")
-            page1.get_by_role("button", name="Tìm kiếm", exact=True).click()
-
-            with page1.expect_download() as download_info:
-                page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
-
-            file_name = f"{enterprise_code_text}.pdf"
-            print(f"wait download file {file_name}")
-            download = download_info.value
-            download_path = os.path.join(DOWNLOAD_DIR, file_name)
-            download.save_as(download_path)
-            page1.wait_for_timeout(5000)
-            with open(download_path, "rb") as file:
-                file_content = file.read()
-            os.remove(download_path)
-
-            folder_id = os.getenv("folder_id")
-            print(download_path, folder_id)
-            upload_basic(folder_id, file_content, file_name, "application/pdf")
-
-            print(f"Successfully installed {file_name}")
-            page1.wait_for_timeout(5000)
-            page1.close()
+            check_business_code = await Electronic_report.objects.filter(
+                business_code=business_code
+            ).exists()
+            if not check_business_code:
+                await Electronic_report.objects.create(
+                    business_name=enterprise_name_text,
+                    business_code=business_code,
+                )
+            print(f"Business code: {business_code} {check_business_code}")
 
 
-def bytedance():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True, args=["--single-process", "--incognito"]
+async def bytedance():
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(
+            headless=False, args=["--single-process", "--incognito"]
         )
-        ctx = browser.new_context()
-
-        for pagination in range(1, 5):
-            page = ctx.new_page()
+        ctx = await browser.new_context()
+        
+        
+            
+        for pagination in range(1, 6):
+            page = await ctx.new_page()
             print(os.getenv("url_bcdn"))
-            page.goto(os.getenv("url_bcdn"))
-            page.wait_for_timeout(5000)
+            print(f"page {pagination}")
+            await page.goto(os.getenv("url_bcdn"))
+            await page.wait_for_load_state("networkidle")  # Wait for network to be idle
+            await page.wait_for_timeout(5000)
 
             if pagination >= 2:
-                result = page.evaluate(
+                result = await page.evaluate(
                     f"__doPostBack('ctl00$C$CtlList','Page${pagination}');"
                 )
                 print(result)
-                page.wait_for_timeout(5000)
+                await page.wait_for_timeout(5000)
 
-            process_page_data(page)
-            page.close()
+            await process_page_data(page)
+            await page.close()
 
-        browser.close()
+        await browser.close()
 
 
 if __name__ == "__main__":
-    bytedance()
+    asyncio.run(bytedance())

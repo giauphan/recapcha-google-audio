@@ -4,6 +4,7 @@ from playwright.sync_api import sync_playwright
 from dotenv import load_dotenv
 from recognizer.agents.playwright import SyncChallenger
 from GoogleDriver import upload_basic
+from Model.ElectronicReport import Electronic_report
 
 load_dotenv()
 
@@ -28,33 +29,33 @@ def process_page_data(arr_bussine_code, ctx):
         enterprise_code_text = extract_business_code(enterprise_code.inner_text())
         print(f"Business code: {enterprise_code_text}")
 
-        page1 = ctx.new_page()
-        page1.goto(os.getenv("url_find_bcdn"))
-        page1.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
-        page1.wait_for_timeout(5000)
+        page_find = ctx.new_page()
+        page_find.goto(os.getenv("url_find_bcdn"))
+        page_find.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
+        page_find.wait_for_timeout(5000)
         while True:
             try:
-                challenger = SyncChallenger(page1)
+                challenger = SyncChallenger(page_find)
                 challenger.solve_recaptcha()
                 break
             except:
                 print("Your computer or network may be sending automated queries")
-                page1.reload()
-                page1.wait_for_timeout(15000)
+                page_find.reload()
+                page_find.wait_for_timeout(15000)
 
-        page1.locator("#ctl00_C_ENT_GDT_CODEFld").click()
-        page1.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_code_text}")
-        page1.get_by_role("button", name="Tìm kiếm", exact=True).click()
+        page_find.locator("#ctl00_C_ENT_GDT_CODEFld").click()
+        page_find.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_code_text}")
+        page_find.get_by_role("button", name="Tìm kiếm", exact=True).click()
 
-        with page1.expect_download() as download_info:
-            page1.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
+        with page_find.expect_download() as download_info:
+            page_find.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
 
         file_name = f"{enterprise_code_text}.pdf"
         print(f"wait download file {file_name}")
         download = download_info.value
         download_path = os.path.join(DOWNLOAD_DIR, file_name)
         download.save_as(download_path)
-        page1.wait_for_timeout(5000)
+        page_find.wait_for_timeout(5000)
         with open(download_path, "rb") as file:
             file_content = file.read()
         os.remove(download_path)
@@ -64,21 +65,23 @@ def process_page_data(arr_bussine_code, ctx):
         upload_basic(folder_id, file_content, file_name, "application/pdf")
 
         print(f"Successfully installed {file_name}")
-        page1.wait_for_timeout(5000)
-        page1.close()
+        page_find.wait_for_timeout(5000)
+        page_find.close()
 
 
-def bytedance():
+async def download_bcdn():
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=True, args=["--single-process", "--incognito"]
         )
         ctx = browser.new_context()
-
-        process_page_data(ctx)
+        Electronic = await Electronic_report.objects.all()
+        process_page_data(Electronic, ctx)
 
         browser.close()
 
 
+import asyncio
+
 if __name__ == "__main__":
-    bytedance()
+    asyncio.run(download_bcdn())
