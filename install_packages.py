@@ -7,7 +7,10 @@ def install_packages():
         "python-dotenv",
         "google",
         "google-api-python-client",
-        "pytz"
+        "pytz",
+        "orm",
+        "asyncio",
+        "aiosqlite"
     ]
     try:
         subprocess.run(["pip", "install", "--upgrade", "pip"], check=True)
