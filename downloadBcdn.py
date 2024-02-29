@@ -9,57 +9,60 @@ from Model.ElectronicReport import Electronic_report
 load_dotenv()
 
 
-async def process_page_data(enterprise_code_text, page_find):
+async def process_page_data(arr_business_code, ctx):
     CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
     DOWNLOAD_DIR = os.path.join(CURRENT_DIR, "downloads")
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
-    await page_find.wait_for_selector("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld")
-    await page_find.wait_for_timeout(5000)
-    await page_find.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option(
-        "NEW"
-    )
-    await page_find.wait_for_timeout(5000)
+    for business_obj in arr_business_code:
+        enterprise_code_text = business_obj.business_code
+        print(f"Business code: {enterprise_code_text}")
 
-    for _ in range(3):
-        try:
-            challenger = AsyncChallenger(page_find)
-            await challenger.solve_recaptcha()
-            print("Successfully capcha")
-            await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").click()
-            await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").fill(
-                f"{enterprise_code_text}"
-            )
-            await page_find.wait_for_timeout(1000)
-            await page_find.get_by_role("button", name="Tìm kiếm", exact=True).click()
-            await page_find.wait_for_timeout(3000)
+        page_find = await ctx.new_page()
+        await page_find.goto(os.getenv("url_find_bcdn"))
+        print(os.getenv("url_find_bcdn"))
+        await page_find.wait_for_selector("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld")
+        await page_find.wait_for_timeout(5000)
+        await page_find.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option(
+            "NEW"
+        )
+        await page_find.wait_for_timeout(5000)
+        while True:
+            try:
+                challenger = AsyncChallenger(page_find)
+                await challenger.solve_recaptcha()
+                break
+            except:
+                print("Your computer or network may be sending automated queries")
+                await page_find.reload()
+                await page_find.wait_for_timeout(15000)
 
-            async with page_find.expect_download() as download_info:
-                await page_find.locator(
-                    "#ctl00_C_CtlList_ctl02_LnkGetPDFActive"
-                ).click()
+        await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").click()
+        await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").fill(
+            f"{enterprise_code_text}"
+        )
+        await page_find.get_by_role("button", name="Tìm kiếm", exact=True).click()
 
-            download = await download_info.value
-            file_name = f"{enterprise_code_text}.pdf"
-            download_path = os.path.join(DOWNLOAD_DIR, file_name)
-            await download.save_as(download_path)
-            await page_find.wait_for_timeout(5000)
+        async with page_find.expect_download() as download_info:
+            await page_find.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
 
-            with open(download_path, "rb") as file:
-                file_content = file.read()
-            os.remove(download_path)
-            folder_id = os.getenv("folder_id")
-            upload_basic(folder_id, file_content, file_name, "application/pdf")
-            print(f"Successfully downloaded and uploaded {file_name}")
-            break
-        except Exception as e:
-            print(f"Error occurred: {e}")
-            await page_find.reload()
-            await page_find.wait_for_timeout(15000)
-    else:
-        print("Failed after multiple attempts. Moving to the next business object.")
+        file_name = f"{enterprise_code_text}.pdf"
+        print(f"wait download file {file_name}")
+        download = download_info.value
+        download_path = os.path.join(DOWNLOAD_DIR, file_name)
+        await download.save_as(download_path)
+        await page_find.wait_for_timeout(5000)
+        with open(download_path, "rb") as file:
+            file_content = file.read()
+        os.remove(download_path)
 
-    await page_find.close()
+        folder_id = os.getenv("folder_id")
+        print(download_path, folder_id)
+        upload_basic(folder_id, file_content, file_name, "application/pdf")
+
+        print(f"Successfully installed {file_name}")
+        await page_find.wait_for_timeout(5000)
+        await page_find.close()
 
 
 async def download_bcdn():
@@ -69,12 +72,8 @@ async def download_bcdn():
         )
         ctx = await browser.new_context()
         Electronic = await Electronic_report.objects.all()
+        await process_page_data(Electronic, ctx)
 
-        for business_obj in Electronic:
-            enterprise_code_text = business_obj.business_code
-            page_find = await ctx.new_page()
-            await page_find.goto(os.getenv("url_find_bcdn"))
-            await process_page_data(enterprise_code_text, page_find)
         await browser.close()
 
 
