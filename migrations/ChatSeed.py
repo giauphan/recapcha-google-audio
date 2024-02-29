@@ -8,11 +8,15 @@ from Model.ElectronicReport import Electronic_report
 
 
 async def main():
-    Electronic_objects = await Electronic_report.objects.count()
-    print(Electronic_objects)
-    # for Electronic_obj in Electronic_objects:
-    #     create_at = Electronic_obj.business_code
-    #     print(create_at)
+    count = await Electronic_report.objects.count()
+    if count > 0:
+        Electronic_objects = await Electronic_report.objects.filter(status=True).all()
+
+        for Electronic_obj in Electronic_objects:
+            create_at = Electronic_obj.id
+            await Electronic_report.objects.filter(business_code=Electronic_obj.business_code).update(status=False)
+
+            print(create_at)
 
 
 import asyncio

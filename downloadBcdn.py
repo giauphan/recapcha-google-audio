@@ -42,6 +42,8 @@ async def process_page_data(arr_business_code, ctx):
         await page_find.get_by_role("button", name="Tìm kiếm", exact=True).click()
 
         async with page_find.expect_download() as download_info:
+            await page_find.wait_for_selector("#ctl00_C_CtlList_ctl02_LnkGetPDFActive")
+            await page_find.wait_for_timeout(5000)
             await page_find.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
 
         file_name = f"{enterprise_code_text}.pdf"
