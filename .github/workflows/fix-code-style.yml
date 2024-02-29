@@ -27,7 +27,7 @@ jobs:
       - name: Run black
         run: black ./
 
-       - name: Pull changes
+      - name: Pull changes
         run: git pull
      
       - name: Commit changes
