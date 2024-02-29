@@ -22,8 +22,9 @@ class Electronic_report(orm.Model):
     registry = models
     fields = {
         "id": orm.Integer(primary_key=True),
-        "business_name": orm.String(max_length=255),
-        "business_code": orm.Integer(),
+        "business_name": orm.String(max_length=255,index=True ),
+        "business_code": orm.Integer(unique=True,index =True),
+        "status":orm.Boolean(default=0),
         "location": orm.String(max_length=255),
         "registration_period": orm.DateTime(default=utc_now),
         "create_at":orm.DateTime(default=utc_now)
