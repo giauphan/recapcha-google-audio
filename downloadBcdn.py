@@ -28,32 +28,33 @@ async def process_page_data(arr_business_code, ctx):
         )
         await page_find.wait_for_timeout(5000)
 
-        for _ in range(3):  # Try 3 times
+        for _ in range(3):
             try:
                 challenger = AsyncChallenger(page_find)
                 await challenger.solve_recaptcha()
+                print("Successfully capcha")
                 await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").click()
-                await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").fill(
-                    f"{enterprise_code_text}"
-                )
-                await page_find.get_by_role(
-                    "button", name="Tìm kiếm", exact=True
-                ).click()
+                await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_code_text}")
+                await page_find.wait_for_timeout(1000)
+                await page_find.get_by_role("button", name="Tìm kiếm", exact=True).click()
+                await page_find.wait_for_timeout(3000)
+                
                 async with page_find.expect_download() as download_info:
-                    await page_find.locator(
-                        "#ctl00_C_CtlList_ctl02_LnkGetPDFActive"
-                    ).click()
-                download = download_info.value
+                    await page_find.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
+                    
+                download = await download_info.value
                 file_name = f"{enterprise_code_text}.pdf"
                 download_path = os.path.join(DOWNLOAD_DIR, file_name)
                 await download.save_as(download_path)
+                await page_find.wait_for_timeout(5000)
+                
                 with open(download_path, "rb") as file:
                     file_content = file.read()
                 os.remove(download_path)
                 folder_id = os.getenv("folder_id")
                 upload_basic(folder_id, file_content, file_name, "application/pdf")
                 print(f"Successfully downloaded and uploaded {file_name}")
-                break  # Exit the retry loop if successful
+                break
             except Exception as e:
                 print(f"Error occurred: {e}")
                 await page_find.reload()
