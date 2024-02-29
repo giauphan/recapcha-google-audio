@@ -1,16 +1,17 @@
 import subprocess
 
+
 def install_packages():
     packages = [
         "playwright",
-        "recognizer",  
+        "recognizer",
         "python-dotenv",
         "google",
         "google-api-python-client",
         "pytz",
         "orm",
         "asyncio",
-        "aiosqlite"
+        "aiosqlite",
     ]
     try:
         subprocess.run(["pip", "install", "--upgrade", "pip"], check=True)
@@ -24,6 +25,6 @@ def install_packages():
         except subprocess.CalledProcessError as e:
             print(f"Failed to install {package}. Error: {e}")
 
+
 if __name__ == "__main__":
     install_packages()
-    

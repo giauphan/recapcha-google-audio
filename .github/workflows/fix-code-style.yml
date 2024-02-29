@@ -1,0 +1,36 @@
+name: fix-code-style
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  fix-code-style:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      - name: Install black
+        run: pip install black
+
+      - name: Run black
+        run: black ./
+
+      - name: Commit changes
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add .
+          git commit -m "chore: fix code style" || echo "No changes to commit"
+          git pull
+          git push
