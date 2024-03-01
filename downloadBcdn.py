@@ -50,7 +50,7 @@ async def process_page_data(enterprise_code_text, page_find):
 
 async def bytedance():
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False, args=["--single-process", "--incognito"])
+        browser = await p.chromium.launch(headless=True, args=["--single-process", "--incognito"])
         ctx = await browser.new_context()
         Electronic = await Electronic_report.objects.all()
 
