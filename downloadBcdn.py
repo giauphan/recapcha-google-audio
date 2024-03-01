@@ -13,16 +13,16 @@ async def process_page_data(enterprise_code_text, page_find):
     DOWNLOAD_DIR = os.path.join(CURRENT_DIR, "downloads")
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
-    await page_find.wait_for_selector("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld")
-    await page_find.wait_for_timeout(5000)
-    await page_find.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
-    await page_find.wait_for_timeout(5000)
-    await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").click()
-    await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_code_text}")
-    await page_find.wait_for_timeout(5000)
-
     for _ in range(3):  
         try:
+            await page_find.wait_for_selector("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld")
+            await page_find.wait_for_timeout(5000)
+            await page_find.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
+            await page_find.wait_for_timeout(5000)
+            await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").click()
+            await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_code_text}")
+            await page_find.wait_for_timeout(5000)
+
             challenger = AsyncChallenger(page_find)
             await challenger.solve_recaptcha()
             
@@ -42,15 +42,17 @@ async def process_page_data(enterprise_code_text, page_find):
             return True  # Exit the function if successful
         except Exception as e:
             print(f"Error occurred: {e}")
-            await page_find.reload()
-            await page_find.wait_for_timeout(15000)
+            await page_find.goto(os.getenv("url_bcdn"))
+            await page_find.wait_for_load_state("networkidle")
+            await page_find.wait_for_timeout(5000)
+            await page_find.locator('#ctl00_C_RptProdGroups_ctl07_BtnToFilterList').click()
     else:
         print("Failed after multiple attempts.")
         return False
 
 async def bytedance():
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True, args=["--single-process", "--incognito"])
+        browser = await p.chromium.launch(headless=False, args=["--single-process", "--incognito"])
         ctx = await browser.new_context()
         Electronic = await Electronic_report.objects.all()
 
@@ -58,9 +60,10 @@ async def bytedance():
             page = await ctx.new_page()
             print(os.getenv("url_find_bcdn"))
 
-            await page.goto(os.getenv("url_find_bcdn"))
+            await page.goto(os.getenv("url_bcdn"))
             await page.wait_for_load_state("networkidle")
             await page.wait_for_timeout(5000)
+            await page.locator('#ctl00_C_RptProdGroups_ctl07_BtnToFilterList').click()
 
             enterprise_code_text = business_obj.business_code
             success = await process_page_data(enterprise_code_text, page)
