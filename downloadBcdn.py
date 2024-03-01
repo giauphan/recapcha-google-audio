@@ -67,6 +67,7 @@ async def bytedance():
 
             enterprise_code_text = business_obj.business_code
             success = await process_page_data(enterprise_code_text, page)
+            await Electronic_report.objects.filter(business_code=business_obj.business_code).update(status=True)
             if success:
                 await page.close()
             else:
