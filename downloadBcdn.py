@@ -29,7 +29,7 @@ async def process_page_data(enterprise_code_text, page_find):
             await page_find.get_by_role("button", name="Tìm kiếm", exact=True).click()
             async with page_find.expect_download() as download_info:
                 await page_find.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
-            download = download_info.value
+            download = await download_info.value
             file_name = f"{enterprise_code_text}.pdf"
             download_path = os.path.join(DOWNLOAD_DIR, file_name)
             await download.save_as(download_path)
