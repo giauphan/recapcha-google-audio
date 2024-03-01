@@ -12,6 +12,7 @@ async def main():
     count_completed = await Electronic_report.objects.filter(status=True).count()
     print(f"total : {count} comleted : {count_completed}")
 
+
 import asyncio
 
 if __name__ == "__main__":

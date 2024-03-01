@@ -8,27 +8,34 @@ from Model.ElectronicReport import Electronic_report
 
 load_dotenv()
 
+
 async def process_page_data(enterprise_code_text, page_find):
     CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
     DOWNLOAD_DIR = os.path.join(CURRENT_DIR, "downloads")
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
-    for _ in range(3):  
+    for _ in range(3):
         try:
             await page_find.wait_for_selector("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld")
             await page_find.wait_for_timeout(5000)
-            await page_find.locator("#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld").select_option("NEW")
+            await page_find.locator(
+                "#ctl00_C_ANNOUNCEMENT_TYPE_IDFilterFld"
+            ).select_option("NEW")
             await page_find.wait_for_timeout(5000)
             await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").click()
-            await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").fill(f"{enterprise_code_text}")
+            await page_find.locator("#ctl00_C_ENT_GDT_CODEFld").fill(
+                f"{enterprise_code_text}"
+            )
             await page_find.wait_for_timeout(5000)
 
             challenger = AsyncChallenger(page_find)
             await challenger.solve_recaptcha()
-            
+
             await page_find.get_by_role("button", name="Tìm kiếm", exact=True).click()
             async with page_find.expect_download() as download_info:
-                await page_find.locator("#ctl00_C_CtlList_ctl02_LnkGetPDFActive").click()
+                await page_find.locator(
+                    "#ctl00_C_CtlList_ctl02_LnkGetPDFActive"
+                ).click()
             download = await download_info.value
             file_name = f"{enterprise_code_text}.pdf"
             download_path = os.path.join(DOWNLOAD_DIR, file_name)
@@ -45,14 +52,19 @@ async def process_page_data(enterprise_code_text, page_find):
             await page_find.goto(os.getenv("url_bcdn"))
             await page_find.wait_for_load_state("networkidle")
             await page_find.wait_for_timeout(5000)
-            await page_find.locator('#ctl00_C_RptProdGroups_ctl07_BtnToFilterList').click()
+            await page_find.locator(
+                "#ctl00_C_RptProdGroups_ctl07_BtnToFilterList"
+            ).click()
     else:
         print("Failed after multiple attempts.")
         return False
 
+
 async def bytedance():
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True, args=["--single-process", "--incognito"])
+        browser = await p.chromium.launch(
+            headless=True, args=["--single-process", "--incognito"]
+        )
         ctx = await browser.new_context()
         Electronic = await Electronic_report.objects.all()
 
@@ -63,11 +75,13 @@ async def bytedance():
             await page.goto(os.getenv("url_bcdn"))
             await page.wait_for_load_state("networkidle")
             await page.wait_for_timeout(5000)
-            await page.locator('#ctl00_C_RptProdGroups_ctl07_BtnToFilterList').click()
+            await page.locator("#ctl00_C_RptProdGroups_ctl07_BtnToFilterList").click()
 
             enterprise_code_text = business_obj.business_code
             success = await process_page_data(enterprise_code_text, page)
-            await Electronic_report.objects.filter(business_code=business_obj.business_code).update(status=True)
+            await Electronic_report.objects.filter(
+                business_code=business_obj.business_code
+            ).update(status=True)
             if success:
                 await page.close()
             else:
@@ -76,6 +90,7 @@ async def bytedance():
                 continue
 
         await browser.close()
+
 
 if __name__ == "__main__":
     asyncio.run(bytedance())
