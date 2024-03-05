@@ -50,7 +50,6 @@ async def process_page_data(enterprise_code_text, page_find):
             return True
         except Exception as e:
             print(f"Error occurred: {e}")
-            enterprise_code_text = f"0{enterprise_code_text}"
             await page_find.goto(os.getenv("url_bcdn"))
             await page_find.wait_for_load_state("networkidle")
             await page_find.wait_for_timeout(5000)
