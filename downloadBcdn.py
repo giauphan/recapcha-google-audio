@@ -86,7 +86,7 @@ async def bytedance():
             if success:
                 await page.close()
             else:
-                print("Skipping to the next business object due to failure.")
+                print(f"Skipping to the next business object due to failure.enterprise_code_text: {enterprise_code_text}")
                 await page.close()
                 continue
 
