@@ -26,7 +26,7 @@ class Electronic_report(orm.Model):
     fields = {
         "id": orm.Integer(primary_key=True),
         "business_name": orm.String(max_length=255, index=True),
-        "business_code": orm.String(unique=True, index=True),
+        "business_code": orm.String(unique=True, max_length=255,index=True),
         "status": orm.Boolean(default=0),
         "create_at": orm.DateTime(default=utc_now),
     }
