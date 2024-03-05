@@ -46,7 +46,7 @@ async def process_page_data(enterprise_code_text, page_find):
             folder_id = os.getenv("folder_id")
             upload_basic(folder_id, file_content, file_name, "application/pdf")
             print(f"Successfully downloaded and uploaded {file_name}")
-            return True 
+            return True
         except Exception as e:
             print(f"Error occurred: {e}")
             enterprise_code_text = f"0{enterprise_code_text}"
