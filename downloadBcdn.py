@@ -51,7 +51,7 @@ async def process_page_data(enterprise_code_text, page_find):
             await page_find.reload()
             await page_find.wait_for_load_state("networkidle")
             await page_find.wait_for_timeout(5000)
-          
+
     else:
         print("Failed after multiple attempts.")
         return False
