@@ -65,7 +65,7 @@ async def bytedance():
             headless=True, args=["--single-process", "--incognito"]
         )
         ctx = await browser.new_context()
-        Electronic = await Electronic_report.objects.all()
+        Electronic = await Electronic_report.objects.filter(status=False).all()
 
         for business_obj in Electronic:
             page = await ctx.new_page()
