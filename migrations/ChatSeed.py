@@ -9,6 +9,8 @@ from Model.ElectronicReport import Electronic_report
 
 async def main():
     count = await Electronic_report.objects.count()
+    Electronic_report = await Electronic_report.objects.all()
+    print(f"Electronic_report: {Electronic_report}")
     count_completed = await Electronic_report.objects.filter(status=True).count()
     print(f"total : {count} comleted : {count_completed}")
 
