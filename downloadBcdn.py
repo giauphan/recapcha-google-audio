@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from recognizer.agents.playwright import AsyncChallenger
 from GoogleDriver import upload_basic
 from Model.ElectronicReport import Electronic_report
+import botright
 
 load_dotenv()
 
@@ -59,9 +60,7 @@ async def process_page_data(enterprise_code_text, page_find):
 
 async def bytedance():
     async with async_playwright() as p:
-        browser = await p.chromium.launch(
-            headless=True, args=["--single-process", "--incognito"]
-        )
+        browser = await botright.Botright( headless=True)
         ctx = await browser.new_context()
         Electronic = await Electronic_report.objects.filter(status=False).all()
 
