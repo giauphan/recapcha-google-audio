@@ -11,7 +11,6 @@ async def main():
     count = await Electronic_report.objects.count()
     electronic_reports = await Electronic_report.objects.all()
     for electronic_report in electronic_reports:
-        print(f"Electronic Report: {electronic_report.business_code}")
 
     count_completed = await Electronic_report.objects.filter(status=True).count()
     print(f"total : {count} comleted : {count_completed}")
