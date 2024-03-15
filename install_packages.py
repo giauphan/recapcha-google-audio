@@ -12,6 +12,7 @@ def install_packages():
         "orm",
         "asyncio",
         "aiosqlite",
+        "botright"
     ]
     try:
         subprocess.run(["pip", "install", "--upgrade", "pip"], check=True)
