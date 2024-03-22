@@ -1,3 +1,5 @@
-playwright==1.17.1
-recognizer==
-python-dotenv==5.3.0
+SQLAlchemy<=2.0.0
+orm~=0.2
+python-dotenv~=1.0.1
+pytz~=2024.1
+aiosqlite~=0.20.0
