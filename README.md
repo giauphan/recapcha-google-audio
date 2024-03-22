@@ -76,3 +76,12 @@ When you're done, deactivate the virtual environment:
 
 ```bash
 deactivate
+```
+# run playwright headless
+
+```bash
+sudo apt-get install libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libatspi2.0-0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libxkbcommon0 libpango-1.0-0 libcairo2 libasound2
+sudo apt update
+sudo  apt install libgl1-mesa-glx
+```
+
