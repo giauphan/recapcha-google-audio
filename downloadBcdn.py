@@ -61,7 +61,7 @@ async def process_page_data(enterprise_code_text, page_find):
 async def bytedance():
     async with async_playwright() as p:
         browser = await botright.Botright( headless=True)
-        ctx = await browser.new_context()
+        ctx = await browser.new_browser()
         Electronic = await Electronic_report.objects.filter(status=False).all()
 
         for business_obj in Electronic:
